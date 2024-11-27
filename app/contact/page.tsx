@@ -1,8 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
-import SEO from '../components/SEO';
+import React, { useEffect, useState } from "react";
+import SEO from "../components/SEO";
+
+interface ContactInfo {
+  id: number;
+  title: { rendered: string };
+  content: { rendered: string };
+  email?: string;
+  kvk_number?: string;
+  office_address?: string;
+  phone_number?: string;
+  postal_address?: string;
+  vestigingsnummer?: string;
+}
 
 // Define the types for form inputs
 interface FormData {
@@ -14,7 +26,9 @@ interface FormData {
 }
 
 const ContactUs: React.FC = () => {
-  // State to handle form data
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
@@ -22,6 +36,28 @@ const ContactUs: React.FC = () => {
     product: "",
     message: "",
   });
+
+  // Fetch Contact Info
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch(
+          "https://docker-image-production-cde8.up.railway.app/wp-json/wp/v2/contact_informatie?slug=contact&_embed"
+        );
+        const data: ContactInfo[] = await response.json();
+
+        if (data.length > 0) {
+          setContactInfo(data[0]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch contact information:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchContactInfo();
+  }, []);
 
   // Handle form input changes
   const handleInputChange = (
@@ -34,9 +70,26 @@ const ContactUs: React.FC = () => {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className="w-full h-full py-20 flex items-center justify-center">
+        <p>Loading contact information...</p>
+      </div>
+    );
+  }
+
+  if (!contactInfo) {
+    return (
+      <div className="w-full h-full py-20 flex items-center justify-center">
+        <p>Contact information not found.</p>
+      </div>
+    );
+  }
+
   return (
     <>
-      <SEO 
+      {/* SEO Metadata */}
+      <SEO
         title="Contact LEDEYN | Get in Touch with Import-Export Experts"
         description="Contact LEDEYN for inquiries about our high-quality foods and commodities. Reach out to our import-export experts for information on our products and services."
         keywords="LEDEYN contact, import-export inquiries, food commodities contact, LEDEYN products, contact form"
@@ -44,7 +97,7 @@ const ContactUs: React.FC = () => {
         ogUrl="https://ledeyn.com/contact"
       />
 
-      {/* Hero Section with Background Image and Animated Gradient */}
+      {/* Hero Section */}
       <section className="relative h-[75vh] w-full flex items-center justify-center bg-cover bg-center bg-no-repeat hero-background">
         {/* Animated Gradient Overlay */}
         <div className="absolute inset-0 animated-gradient z-10"></div>
@@ -67,33 +120,50 @@ const ContactUs: React.FC = () => {
       {/* Contact Information Section */}
       <section className="py-16 px-8 md:px-16 lg:px-24 bg-gray-100">
         <div className="container mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">Get In Touch</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
+            Get In Touch
+          </h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
             {/* Contact Information */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Contact Information</h3>
-              <p className="text-gray-700 mb-4">KVK-nummer: 89992199</p>
-              <p className="text-gray-700 mb-4">Besloten Vennootschap</p>
-              <p className="text-gray-700 mb-4">Vestigingsnummer: 000055745768</p>
-              <p className="text-gray-700 mb-4">
-                Office Address: Stationsplein 45, 4th floor, 3013AK Rotterdam, The Netherlands
-              </p>
-              <p className="text-gray-700 mb-4">
-                Postal Address: Edisonstraat 5B, 2652 XS Berkel en Rodenrijs
-              </p>
-              <p className="text-gray-700 mb-4">
-                Phone:{" "}
-                <Link href="tel:+31624335929" className="text-primary hover:underline">
-                  +31 6 24335929
-                </Link>
-              </p>
-              <p className="text-gray-700 mb-4">
-                Email:{" "}
-                <Link href="mailto:info@ledeyn.com" className="text-primary hover:underline">
-                  info@ledeyn.com
-                </Link>
-              </p>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                Contact Information
+              </h3>
+              {contactInfo.kvk_number && (
+                <p className="text-gray-700 mb-4">KVK-nummer: {contactInfo.kvk_number}</p>
+              )}
+              {contactInfo.vestigingsnummer && (
+                <p className="text-gray-700 mb-4">
+                  Vestigingsnummer: {contactInfo.vestigingsnummer}
+                </p>
+              )}
+              {contactInfo.office_address && (
+                <p className="text-gray-700 mb-4">
+                  Office Address: {contactInfo.office_address}
+                </p>
+              )}
+              {contactInfo.postal_address && (
+                <p className="text-gray-700 mb-4">
+                  Postal Address: {contactInfo.postal_address}
+                </p>
+              )}
+              {contactInfo.phone_number && (
+                <p className="text-gray-700 mb-4">
+                  Phone:{" "}
+                  <Link href={`tel:${contactInfo.phone_number}`} className="text-primary hover:underline">
+                    {contactInfo.phone_number}
+                  </Link>
+                </p>
+              )}
+              {contactInfo.email && (
+                <p className="text-gray-700 mb-4">
+                  Email:{" "}
+                  <Link href={`mailto:${contactInfo.email}`} className="text-primary hover:underline">
+                    {contactInfo.email}
+                  </Link>
+                </p>
+              )}
             </div>
 
             {/* Location Map */}
@@ -177,12 +247,12 @@ const ContactUs: React.FC = () => {
                   <option value="" disabled>
                     Select a product
                   </option>
-                  <option value="Animala FEED & Protein">Animala FEED & Protein</option>
+                  <option value="Animal FEED & Protein">Animal FEED & Protein</option>
                   <option value="Cocoa">Cocoa</option>
                   <option value="Coffee">Coffee</option>
                   <option value="Cotton">Cotton</option>
                   <option value="Edible oils">Edible oils</option>
-                  <option value="Grain & Seeds">Grain & Seeds – Sesame / Soy Beans / wheat / corn</option>
+                  <option value="Grain & Seeds">Grain & Seeds – Sesame / Soy Beans / Wheat / Corn</option>
                   <option value="Nuts">Nuts – Cashew / Macadamia</option>
                   <option value="Rubber">Rubber</option>
                   <option value="Spices">

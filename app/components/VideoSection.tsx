@@ -71,22 +71,7 @@ const VideoSection = () => {
             </div>
           ))}
         </div>
-
-        {/* Video Section */}
-        <div className="relative max-w-4xl mx-auto shadow-lg rounded-8xl pt-20 rounded-2xl">
-          <div className="relative w-full h-0" style={{ paddingBottom: '56.25%' }}>
-            <video
-              className="absolute top-0 left-0 w-full h-full rounded-lg"
-              src="/video/cacaovideo.webm"
-              autoPlay
-              muted
-              loop
-              controls
-            ></video>
           </div>
-        </div>
-      </div>
-
       {/* SVG Cocoa Leaves on Bottom */}
       <div className="absolute bottom-0 left-0 w-full h-120">
         <Image 
