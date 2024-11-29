@@ -1,16 +1,18 @@
 "use client";
 
 import React from 'react';
-import { FaDrumstickBite, FaSeedling, FaCoffee, FaCottonBureau, FaOilCan, FaPepperHot, FaTree } from 'react-icons/fa';
+import { FaDrumstickBite, FaSeedling, FaCoffee, FaCottonBureau, FaPepperHot, FaTree } from 'react-icons/fa';
 import { GiPeanut } from 'react-icons/gi';
 import Image from 'next/image';
+import { CiDroplet } from "react-icons/ci";
+
 
 const services = [
   { icon: <FaDrumstickBite size={30} />, title: "Animal Feed & Protein" },
   { icon: <FaSeedling size={30} />, title: "Cocoa" },
   { icon: <FaCoffee size={30} />, title: "Coffee" },
   { icon: <FaCottonBureau size={30} />, title: "Cotton" },
-  { icon: <FaOilCan size={30} />, title: "Edible Oils" },
+  { icon: <CiDroplet  size={30} />, title: "Edible Oils" },
   { icon: <FaSeedling size={30} />, title: "Grain & Seeds - Sesame / Soy Beans / Wheat / Corn" },
   { icon: <GiPeanut size={30} />, title: "Nuts - Cashew / Macadamia" },
   { icon: <FaTree size={30} />, title: "Rubber" },
